@@ -2,6 +2,9 @@ package com.api;
 
 import java.io.FileWriter;
 import java.io.IOException;
+
+import javax.swing.*;
+
 import java.util.*;
 
 public class Main {
@@ -56,7 +59,9 @@ public class Main {
 
     public static void main(String[] args) {
         int numeroReferencia = 1000;
-        int[] tamanhoMoldura = {4};
+        int[] tamanhoMoldura = {4, 8, 10};
+        int[] faltaPagFifo = new int[tamanhoMoldura.length];
+        int[] faltaPagEnvelhecimento = new int[tamanhoMoldura.length];
         int maximoNumeroPagina = 50;
 
         int[] sequenciareferencia = geraSequenciaReferencia(numeroReferencia, maximoNumeroPagina);
@@ -71,15 +76,28 @@ public class Main {
 
         System.out.println("Comparação dos algoritimos FIFO e envelhecimento");
         System.out.println();
-        for (int moldura : tamanhoMoldura) {
+        for (int i = 0; i < tamanhoMoldura.length; i++) {
+            int moldura = tamanhoMoldura[i];
+
             int faltaPaginaFifo = simularFifo(sequenciareferencia, moldura);
+            faltaPagFifo[i] = faltaPaginaFifo;
+
             int faltaPaginaEnvelhecimento = simularEnvelhecimento(sequenciareferencia, moldura);
+            faltaPagEnvelhecimento[i] = faltaPaginaEnvelhecimento;
 
             System.out.println("Tamanho das molduras: " + moldura);
             System.out.println("Falta de páginas FIFO: " + faltaPaginaFifo);
             System.out.println("Falta de páginas envelhecimento: " + faltaPaginaEnvelhecimento);
             System.out.println();
         }
+
+        SwingUtilities.invokeLater(() -> {
+            LineChart grafico = new LineChart(tamanhoMoldura, faltaPagFifo, faltaPagEnvelhecimento, "moldura");
+            grafico.setSize(800, 600);
+            grafico.setLocationRelativeTo(null);
+            grafico.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+            grafico.setVisible(true);
+        });
 
     }
 }
